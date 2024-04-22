@@ -1,3 +1,5 @@
 ﻿backend/backend_venv
 backend/.idea
 backend/DB/recipe_database.db
+*/__pycache__
+backend/*/__pycache__/*
