@@ -38,6 +38,8 @@ def create_recipe_db(db_path):
             user_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             surname TEXT,
+            email TEXT,
+            username TEXT,
             password TEXT,
             reviews_num INTEGER
         )

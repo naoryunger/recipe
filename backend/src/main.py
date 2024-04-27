@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException, Depends
+import hashlib
+import secrets
+from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
 import sqlite3
 from sqlite3 import Connection, connect
@@ -34,9 +36,16 @@ class Review(BaseModel):
     user: str
 
 
-class User(BaseModel):
+class FullUser(BaseModel):
     name: str
     surname: str
+    email: str
+    username: str
+    password: str
+
+
+class User(BaseModel):
+    username: str
     password: str
 
 
@@ -108,3 +117,24 @@ def create_user(user: FullUser):
         cursor.execute(query, (user.name, user.surname, user.password, 0))
         db.commit()
     return {"message": "User created successfully"}
+
+
+@app.post("/'login'/")
+def create_user(user: User, response: Response):
+    with get_db() as db:
+        cursor = db.cursor()
+        # TODO - create the password query
+        query = "SELECT password FROM users WHERE username = ?"
+        cursor.execute(query, (user.username, ))
+        results = cursor.fetchall()
+    if not results:
+        raise HTTPException(status_code=401, detail="Invalid username")
+    if hashlib.md5(user.password.encode()).hexdigest() != results[0]:
+        raise HTTPException(status_code=401, detail="Invalid password")
+    # Authentication successful!
+    # Generate a random session token (for demonstration purposes)
+    session_token = secrets.token_hex(16)
+    # Set a session cookie with the session token
+    response = {"message": "Login successful"}
+    response.set_cookie(key="session_token", value=session_token)
+    return response
