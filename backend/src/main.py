@@ -72,6 +72,7 @@ def get_all_recipes():
 def create_review(review: Review):
     with get_db() as db:
         cursor = db.cursor()
+        # TODO - handle wrong recipe_id
         query = """
         INSERT INTO reviews (recipe_id, content, rating, user)
         VALUES (?, ?, ?, ?)
@@ -94,14 +95,16 @@ def get_reviews_for_recipe(recipe_id: int):
 
 # Endpoint to create a new user
 @app.post("/users/")
-def create_user(user: User):
-    import pdb;pdb.set_trace()
+def create_user(user: FullUser):
     with get_db() as db:
+        # TODO - add error case for existing username
         cursor = db.cursor()
+        # TODO - add more details for register (username, email...)
         query = """
         INSERT INTO users (name, surname, password, reviews_num)
         VALUES (?, ?, ?, ?)
         """
+        # TODO - make reviews_num default value = 0
         cursor.execute(query, (user.name, user.surname, user.password, 0))
         db.commit()
     return {"message": "User created successfully"}
