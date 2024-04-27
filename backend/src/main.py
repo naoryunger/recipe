@@ -100,7 +100,7 @@ def create_user(user: User):
         cursor = db.cursor()
         query = """
         INSERT INTO users (name, surname, password, reviews_num)
-        VALUES (?, ?, ?)
+        VALUES (?, ?, ?, ?)
         """
         cursor.execute(query, (user.name, user.surname, user.password, 0))
         db.commit()
